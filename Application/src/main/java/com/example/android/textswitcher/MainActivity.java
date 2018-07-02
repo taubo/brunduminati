@@ -17,7 +17,9 @@
 package com.example.android.textswitcher;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -27,6 +29,7 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -39,6 +42,7 @@ public class MainActivity extends Activity {
     private TextSwitcher mSwitcher;
     private int mCounter = 0;
     private Random r = new Random();
+    private BrundominatiArgumentManager argsManager = new BrundominatiArgumentManager();
     private String essayArguments[] = {
             "Il pareggio di bilancio deve essere raggiunto al fine di non violare una legge naturale",
             "La parita' di genere sara' raggiunta solo quando le donne avranno piu' diritti degli uomini",
@@ -63,13 +67,24 @@ public class MainActivity extends Activity {
             "Il caso base dei fagioli ricorsivi sommergibili Sean Connery, è costituito dalle balene sul Sole",
             "Più Europa, perché il quantitativo attuale si è dimostrato insufficiente a curarci",
             "Un'economia globale a cambio fisso è necessaria al fine di limitare il crescente impatto della finanza cattiva",
-            "Protestantesimo > Cattolicesimo",
+            "Protestantesimo > Cattolicesi  mo",
             "Le sfide della globalizzazione porteranno alla prossima evoluzione della razza umana; sono tali sfide che corregono l'attitudine, " +
                     "tipica dei paesi occidentali del Sud, di oziare",
             "Senza la globalizzazione non riusciremmo mai ad affrontare con successo i Tartari",
             "Il superamento del concetto di famiglia, ci consentirà di raggiungiere nuove vette della collaborazione tra persone e popoli",
             "Bergman è sopravvalutato",
     };
+
+    private void launchManager() {
+        final Intent intent = new Intent(this, ManagerActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        argsManager.load(getApplicationContext());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +110,12 @@ public class MainActivity extends Activity {
         mSwitcher.setOutAnimation(out);
         // END_INCLUDE(setup)
 
+        argsManager.load(getApplicationContext());
+        final ArrayList<Argument> args = argsManager.getAll();
+        for (Argument arg : args) {
+            Log.d("MainActivity", "" + arg.getText());
+        }
+
         /*
          * Setup the 'next' button. The counter is incremented when clicked and
          * the new value is displayed in the TextSwitcher. The change of text is
@@ -105,9 +126,23 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                /*
                 mCounter = r.nextInt(essayArguments.length);
                 mSwitcher.setText(essayArguments[mCounter]);
                 mCounter %= essayArguments.length;
+                */
+                String arg = argsManager.get(mCounter).getText();
+                mCounter = r.nextInt(argsManager.getElemNumber());
+                mSwitcher.setText(arg);
+                Log.d("MainActivity", "index elem " + mCounter + "/" + argsManager.getElemNumber() + " " + arg);
+            }
+        });
+
+        nextButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                launchManager();
+                return true;
             }
         });
 
