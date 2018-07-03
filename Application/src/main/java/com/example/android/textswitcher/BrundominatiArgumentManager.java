@@ -80,6 +80,10 @@ public class BrundominatiArgumentManager implements ArgumentManager {
         return arguments.size();
     }
 
+    public void clear() {
+        arguments.clear();
+    }
+
     public void deleteFile(Context context) {
         String directory = context.getFilesDir().getAbsolutePath();
         File file = new File(directory, argumentsFileName);

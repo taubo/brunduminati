@@ -27,6 +27,7 @@ public class ManagerActivity extends Activity {
             @Override
             public void onClick(View view) {
                 manager.deleteFile(getApplicationContext());
+                setResult(1);
             }
         });
 
@@ -36,12 +37,19 @@ public class ManagerActivity extends Activity {
             public void onClick(View view) {
                 Log.d("ManagerActivity", addText.getText().toString());
                 String arg = addText.getText().toString();
-                manager.add(new Argument(arg + "\n"));
+                manager.add(new Argument(arg));
                 manager.save(getApplicationContext());
                 addText.setText("");
+                setResult(1);
             }
         });
 
         addText = findViewById(R.id.add_text);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setResult(0);
     }
 }
